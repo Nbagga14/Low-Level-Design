@@ -13,11 +13,14 @@ public class CareTaker {
 
     public void undoContent()
     {
-        if(!history.empty())
+        if(history.size()>1)
         {
             history.pop();
             history.peek().readContent();
         }
+        else if(history.size()==1)
+        history.peek().readContent();
+
     }
 
 
