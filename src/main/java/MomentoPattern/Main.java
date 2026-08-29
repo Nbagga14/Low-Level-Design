@@ -1,4 +1,4 @@
-package MomentoDesignPattern;
+package MomentoPattern;
 
 public class Main {
 
