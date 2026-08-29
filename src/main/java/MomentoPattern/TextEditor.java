@@ -1,6 +1,4 @@
-package MomentoDesignPattern;
-
-import org.springframework.objenesis.instantiator.basic.NewInstanceInstantiator;
+package MomentoPattern;
 
 public class TextEditor {
 

@@ -1,4 +1,4 @@
-package MomentoDesignPattern;
+package MomentoPattern;
 
 import java.util.Stack;
 
