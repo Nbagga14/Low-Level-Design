@@ -2,23 +2,17 @@ package SOLID.DIP.Good;
 
 import java.util.List;
 
-public class NotificationService implements NotifierObject{
+public class NotificationService {
 
-    public List<NotifierObject> notificationMode;
+    private final List<NotifierObject> notificationModes;
 
-
-    public NotificationService(List<NotifierObject> notificationMode)
-    {
-        this.notificationMode = notificationMode;
+    public NotificationService(List<NotifierObject> notificationModes) {
+        this.notificationModes = notificationModes;
     }
 
-    @Override
     public void sendNotification() {
-
-        for(NotifierObject notifier : notificationMode)
-        {
+        for (NotifierObject notifier : notificationModes) {
             notifier.sendNotification();
-//            System.out.print("Notification sent successfully via" + notifier);
         }
     }
 }
