@@ -1,4 +1,4 @@
-package TUFR.WOSingleton;
+package Singleton.WOSingleton;
 
 public class JudgeAnalytics {
 
