@@ -1,4 +1,4 @@
-package TUFR.WithSingleton;
+package Singleton.WithSingleton;
 public class JudgeAnalyicsLazyLoadingMain {
 
     public static void main(String[] args) {

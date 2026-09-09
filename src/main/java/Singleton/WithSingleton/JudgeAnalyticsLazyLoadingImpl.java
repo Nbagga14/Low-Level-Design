@@ -1,4 +1,4 @@
-package TUFR.WithSingleton;
+package Singleton.WithSingleton;
 
 // synchroniaztion way to for lazy loading
 /*public class JudgeAnalyticsLazyLoadingImpl {
