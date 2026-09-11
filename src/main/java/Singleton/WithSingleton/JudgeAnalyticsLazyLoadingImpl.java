@@ -24,7 +24,7 @@ package Singleton.WithSingleton;
 
 public class JudgeAnalyticsLazyLoadingImpl {
 
-    private static volatile JudgeAnalyticsLazyLoadingImpl judgeAnalyticsLazyLoading;
+    private static JudgeAnalyticsLazyLoadingImpl judgeAnalyticsLazyLoading;
     private static class Holder
     {
        private static final JudgeAnalyticsLazyLoadingImpl JudgeAnalyticsLazyLoadingImpl = new JudgeAnalyticsLazyLoadingImpl();
