@@ -1,0 +1,10 @@
+package Extras.CommandPattern.TemplatePattern.WithTemplate;
+
+public class JSONParser extends TemplateMethod {
+    @Override
+    public void parseData() {
+        System.out.println("Parsing JSON data");
+    }
+    
+}
+
