@@ -11,6 +11,7 @@ public class NetworkConnection implements Cloneable{
         this.port=port;
     }
 
+
     public String getIp() {
         return ip;
     }
