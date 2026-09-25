@@ -1,4 +1,4 @@
-package Extras.CommandPattern.ObserverPattern.WithoutObserver;
+package ObserverPattern.WithoutObserver;
 
 public class Main {
     public static void main(String[] args) {

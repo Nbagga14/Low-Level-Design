@@ -1,4 +1,4 @@
-package Extras.CommandPattern.StrategyPattern.WithStrategy;
+package StrategyPattern.WithStrategy;
 
 public class CreditCard implements PaymentStrategy {
     @Override

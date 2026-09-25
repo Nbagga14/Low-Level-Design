@@ -1,4 +1,4 @@
-package Extras.CommandPattern.StrategyPattern.WithoutStrategy;
+package StrategyPattern.WithoutStrategy;
 
 public class PaymentService {
 

@@ -1,4 +1,4 @@
-package Extras.CommandPattern.ObserverPattern.WithoutObserver;
+package ObserverPattern.WithoutObserver;
 
 class Device{
     protected int temp;
