@@ -1,6 +1,6 @@
-package Extras.CommandPattern.TemplatePattern.WithoutTemplate;
+package TemplatePattern.WOTemplate;
 
-public class csvParser{
+public class CSVParser{
     public void openFile() {
         System.out.println("Opening csv file");
     }

@@ -1,10 +1,10 @@
-package Extras.CommandPattern.TemplatePattern.WithoutTemplate;
+package TemplatePattern.WOTemplate;
 
-public class WithoutTemplateMethod {
+public class WithoutTemplate {
 
     public static void main(String[] args) {
 
-        csvParser csvParser = new csvParser();
+        CSVParser csvParser = new CSVParser();
         csvParser.openFile();
         csvParser.ParseData();
         csvParser.closeFile();
@@ -15,5 +15,7 @@ public class WithoutTemplateMethod {
         jsonParser.openFile();
         jsonParser.ParseData();
         jsonParser.closeFile();
+
     }
+
 }

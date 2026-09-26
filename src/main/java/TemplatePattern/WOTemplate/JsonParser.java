@@ -1,4 +1,4 @@
-package Extras.CommandPattern.TemplatePattern.WithoutTemplate;
+package TemplatePattern.WOTemplate;
 
 public class JsonParser{
     public void openFile() {
