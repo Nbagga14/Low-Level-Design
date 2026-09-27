@@ -23,7 +23,7 @@ class AirplaneATC implements ATC {
     public void informOthers(Airplane plane) {
         for (Airplane airplane : airplanes) {
             if (airplane != plane) {
-                System.out.println("Informing plane " + airplane.getName() + " for landing of " + plane.getName());
+                System.out.println("Informing " + airplane.getName() + " for landing of " + plane.getName());
             }
         }
     }
