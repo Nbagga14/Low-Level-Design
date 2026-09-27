@@ -1,5 +1,7 @@
 package MultiThreading.MultiThreadByRunnableInterface;
 
+import java.util.concurrent.*;
+
 class SendSMSRunnable implements Runnable {
 
     @Override
@@ -28,17 +30,17 @@ class SendEmailRunnable implements Runnable {
     }
 }
 
-class CalculateETARunnable implements Runnable {
-
-
+class CalculateETARunnable implements Callable<String> {
     @Override
-    public void run() {
+    public String call() throws Exception {
         try {
             System.out.println("Starting ETA Thread");
             Thread.sleep(5000);
-            System.out.println("ETA Calculated!");
+            String eta = "ETA Calculated!";
+            return eta;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return "Error: Thread was interrupted";
         }
     }
 }
@@ -49,26 +51,33 @@ public class OrderService {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
+        // Create ExecutorService to manage threads (pool of 3)
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        // Create Runnable tasks for SMS and Email
         SendSMSRunnable smsRunnable = new SendSMSRunnable();
         SendEmailRunnable emailRunnable = new SendEmailRunnable();
         CalculateETARunnable etaRunnable = new CalculateETARunnable();
 
-        Thread smsThread = new Thread(smsRunnable);
-        Thread emailThread = new Thread(emailRunnable);
-        Thread etaThread = new Thread(etaRunnable);
+        // Submit SMS and Email tasks (no result required - Runnable)
+        executorService.submit(smsRunnable);
+        executorService.submit(emailRunnable);
 
-        smsThread.start();
-        emailThread.start();
-        etaThread.start();
+        // Submit ETA task and get Future object for result (Callable)
+        Future<String> etaResult = executorService.submit(etaRunnable);
 
-        try{
-            smsThread.join();
-            emailThread.join();
-            etaThread.join();
+        try {
+            // Get the result from the Future object for ETA
+            System.out.println("ETA Result: " + etaResult.get());
+
             long end = System.currentTimeMillis();
             System.out.println("All tasks completed in " + (end - start) + "ms");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            // Shutdown the ExecutorService
+            executorService.shutdown();
         }
     }
 }
