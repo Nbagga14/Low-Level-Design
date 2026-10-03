@@ -1,6 +1,5 @@
 package Problems.ParkingLot.Adaptor;
 
 public interface PaymentGatewayAdaptor {
-
-    public void pay();
+    boolean pay(double amount);
 }

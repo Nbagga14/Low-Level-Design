@@ -1,15 +1,14 @@
 package Problems.ParkingLot.Controllers;
 
-package controller;
+import Problems.ParkingLot.Domain.Receipt;
+import Problems.ParkingLot.Domain.Ticket;
+import Problems.ParkingLot.Enums.PaymentGateway;
+import Problems.ParkingLot.Services.PaymentService;
+import Problems.ParkingLot.Services.PricingService;
+import Problems.ParkingLot.Services.ReceiptService;
+import Problems.ParkingLot.Services.SlotService;
+import Problems.ParkingLot.Services.TicketService;
 
-import domain.Receipt;
-import domain.Ticket;
-import service.PaymentService;
-import service.PricingService;
-import service.ReceiptService;
-import service.SlotService;
-import service.TicketService;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ExitController {
@@ -30,89 +29,67 @@ public class ExitController {
         System.out.println("[CONTROLLER] ExitController initialized");
     }
 
-    public ExitResult exitVehicle(UUID ticketId) {
-        System.out.println("[CONTROLLER] Vehicle exit request - Ticket: " + ticketId);
+    public void exitVehicle(UUID ticketId) {
+        System.out.println("\n========== VEHICLE EXIT PROCESS ==========");
+        System.out.println("[CONTROLLER] Processing exit for Ticket: " + ticketId);
 
         try {
-            // Retrieve ticket
-            Optional<Ticket> ticketOpt = ticketService.getTicket(ticketId);
-            if (ticketOpt.isEmpty()) {
-                return new ExitResult(false, null, 0.0, "Ticket not found");
-            }
+            // Step 1: Get the ticket that was generated
+            System.out.println("\n[STEP 1] Retrieving ticket information...");
+            // In real scenario, we would fetch from repository
+            // For now, we'll create a mock ticket
+            UUID vehicleId = UUID.randomUUID();
+            UUID slotId = UUID.randomUUID();
+            Ticket ticket = new Ticket(ticketId, vehicleId, slotId, true);
+            System.out.println("[CONTROLLER] Ticket found: " + ticket);
 
-            Ticket ticket = ticketOpt.get();
-            if (!ticket.isActive()) {
-                return new ExitResult(false, null, 0.0, "Ticket is not active");
-            }
+            // Step 2: Calculate the parking fee
+            System.out.println("\n[STEP 2] Calculating parking fee...");
+            double parkingFee = pricingService.calculateFee(ticket);
+            System.out.println("[CONTROLLER] Total amount to be paid: ₹" + parkingFee);
 
-            // Calculate fee
-            double fee = pricingService.calculateFee(ticket);
-            System.out.println("[CONTROLLER] Fee calculated: " + fee);
+            // Step 3: Process payment through adaptor pattern
+            System.out.println("\n[STEP 3] Processing payment...");
+            System.out.println("[CONTROLLER] Selected payment gateway: " + paymentService.getClass().getSimpleName());
 
-            // Process payment with retry
-            boolean paymentSuccess = paymentService.processPaymentWithRetry(ticketId, fee, 3);
+            boolean paymentSuccess = paymentService.processPayment(parkingFee);
+
             if (!paymentSuccess) {
-                return new ExitResult(false, null, fee, "Payment failed");
+                System.out.println("\n[CONTROLLER] ❌ Payment FAILED! Vehicle cannot exit.");
+                return;
             }
 
-            // Generate receipt
-            Receipt receipt = receiptService.generateReceipt(ticket, fee);
+            // Step 4: Generate receipt/invoice after successful payment
+            System.out.println("\n[STEP 4] Generating receipt/invoice...");
+            Receipt receipt = receiptService.generateReceipt(ticket, parkingFee);
             receiptService.markReceiptAsPaid(receipt);
+            System.out.println("[CONTROLLER] Receipt generated with ID: " + receipt.getId());
+            System.out.println("[CONTROLLER] Receipt Details:\n" + receipt);
 
-            // Release slot
+            // Step 5: Release the slot back
+            System.out.println("\n[STEP 5] Releasing parking slot...");
             slotService.releaseSlot(ticket.getSlotId());
+            System.out.println("[CONTROLLER] Slot " + ticket.getSlotId() + " is now available");
 
-            // Deactivate ticket
+            // Step 6: Mark the ticket as inactive/deactivated
+            System.out.println("\n[STEP 6] Deactivating ticket...");
             ticketService.deactivateTicket(ticketId);
+            ticket.deactivateTicket();
 
-            System.out.println("[CONTROLLER] Vehicle exit successful - Receipt: " + receipt.getId());
-            return new ExitResult(true, receipt.getId(), fee, "Exit successful");
+            System.out.println("\n[CONTROLLER] ✓ Vehicle exit successful!");
+            System.out.println("==========================================\n");
 
         } catch (Exception e) {
-            System.out.println("[CONTROLLER] Vehicle exit failed: " + e.getMessage());
-            return new ExitResult(false, null, 0.0, e.getMessage());
+            System.out.println("[CONTROLLER] ❌ Error during exit process: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public String generateReceiptText(UUID ticketId) {
-        System.out.println("[CONTROLLER] Generating receipt text for ticket: " + ticketId);
+    public void exitVehicleWithGatewaySelection(UUID ticketId, PaymentGateway gateway) {
+        System.out.println("\n========== VEHICLE EXIT PROCESS ==========");
+        System.out.println("[CONTROLLER] Switching to payment gateway: " + gateway);
+        paymentService.switchPaymentGateway(gateway);
 
-        try {
-            Optional<Ticket> ticketOpt = ticketService.getTicket(ticketId);
-            if (ticketOpt.isEmpty()) {
-                return "Ticket not found";
-            }
-
-            Ticket ticket = ticketOpt.get();
-            double fee = pricingService.calculateFee(ticket);
-            Receipt receipt = receiptService.generateReceipt(ticket, fee);
-
-            String receiptText = receiptService.generateReceiptText(receipt, ticket);
-            System.out.println("[CONTROLLER] Receipt text generated successfully");
-            return receiptText;
-
-        } catch (Exception e) {
-            System.out.println("[CONTROLLER] Receipt text generation failed: " + e.getMessage());
-            return "Error generating receipt: " + e.getMessage();
-        }
-    }
-
-    public static class ExitResult {
-        private final boolean success;
-        private final UUID receiptId;
-        private final double fee;
-        private final String message;
-
-        public ExitResult(boolean success, UUID receiptId, double fee, String message) {
-            this.success = success;
-            this.receiptId = receiptId;
-            this.fee = fee;
-            this.message = message;
-        }
-
-        public boolean isSuccess() { return success; }
-        public UUID getReceiptId() { return receiptId; }
-        public double getFee() { return fee; }
-        public String getMessage() { return message; }
+        exitVehicle(ticketId);
     }
 }

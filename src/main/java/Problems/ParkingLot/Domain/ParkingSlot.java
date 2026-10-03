@@ -50,4 +50,5 @@ public class ParkingSlot {
         this.isOccupied = isOccupied;
         this.floorNumber = floorNumber;
     }
+
 }
